@@ -38,6 +38,7 @@ const typeDefs = `#graphql
 
   type Query {
     myTaskLists: [TaskList!]!
+    getTaskList(id: ID!): TaskList
   }
 
   type Mutation {
@@ -46,7 +47,17 @@ const typeDefs = `#graphql
 
     createTaskList(input: CreateTaskListInput): TaskList!
     updateTaskList(input: UpdateTaskListInput): TaskList!
+    deleteTaskList(id: ID!) : DeleteTaskListStatus
+    addUserToTaskList(input: AddUserToTaskList): TaskList!
+  }
 
+  type DeleteTaskListStatus {
+    message: String!
+  }
+
+  input AddUserToTaskList {
+    taskListId: ID!
+    userId: ID!
   }
 
   input SignUpInput {
@@ -113,9 +124,34 @@ const resolvers = {
 
       return await db.collection('TaskLists').find({ userIds: user._id }).toArray()
 
+    },
 
+    getTaskList: async(_, {id}, {db, user}) => {
+      if (!user) {
+        throw new Error('Authentication Error');
+      }
+
+
+       // Fetch the task list with the provided ID
+      const taskList = await db.collection('TaskLists').findOne({ _id: new ObjectId(String(id)) });
+
+      // Check if task list exists
+      if (!taskList) {
+        throw new Error('Task list not found');
+      }
+
+      // Verify that the user is part of the task list's userIds
+      const isUserInList = taskList.userIds.some(userId => userId.equals(user._id));
+
+      if (!isUserInList) {
+        throw new Error('Authorization Error: You do not have access to this task list');
+      }
+
+    
+      return taskList
 
     }
+    
   },
   Mutation: {
     singUp: async (_, { input }, { db }) => {
@@ -207,6 +243,20 @@ const resolvers = {
     
       const { title, id, progress } = input;
 
+       // Fetch the task list with the provided ID
+       const taskList = await db.collection('TaskLists').findOne({ _id: new ObjectId(String(id)) });
+
+       // Check if task list exists
+       if (!taskList) {
+         throw new Error('Task list not found');
+       }
+ 
+       // Verify that the user is part of the task list's userIds
+       const isUserInList = taskList.userIds.some(userId => userId.equals(user._id));
+ 
+       if (!isUserInList) {
+         throw new Error('Authorization Error: You do not have access to this task list');
+       }
       
       const result = await db.collection('TaskLists').updateOne(
         {_id: new ObjectId(String(id))}, {
@@ -225,7 +275,86 @@ const resolvers = {
       // Fetch the updated document
       return await db.collection('TaskLists').findOne({ _id: new ObjectId(String(id)) });
     
+    },
+
+    deleteTaskList: async(_, {id}, {db, user}) => {
+      if (!user) {
+        throw new Error('Authentication Error');
+      }
+
+       // Fetch the task list with the provided ID
+       const taskList = await db.collection('TaskLists').findOne({ _id: new ObjectId(String(id)) });
+
+       // Check if task list exists
+       if (!taskList) {
+         throw new Error('Task list not found');
+       }
+ 
+       // Verify that the user is part of the task list's userIds
+       const isUserInList = taskList.userIds.some(userId => userId.equals(user._id));
+ 
+       if (!isUserInList) {
+         throw new Error('Authorization Error: You do not have access to this task list');
+       }
+
+      const result = await db.collection('TaskLists').deleteOne({ _id: new ObjectId(String(id)) })
+
+      if (result.deletedCount === 0) {
+        throw new Error('Task list not found or not updated');
+      }
+
+      return {
+        message: 'deleted'
+      }
+    },
+
+    addUserToTaskList : async(_, {input}, {db, user}) => {
+      if (!user) {
+        throw new Error('Authentication Error');
+      }
+      const { taskListId, userId } = input;
+
+       // Fetch the task list with the provided ID
+       const taskList = await db.collection('TaskLists').findOne({ _id: new ObjectId(String(taskListId)) });
+
+       // Check if task list exists
+       if (!taskList) {
+         throw new Error('Task list not found');
+       }
+ 
+       // Verify that the user is part of the task list's userIds
+       const isUserInList = taskList.userIds.some(userId => userId.equals(user._id));
+
+ 
+ 
+       if (!isUserInList ) {
+         throw new Error('Authorization Error: You do not have access to this task list');
+       }
+
+       const isNewuserInList = taskList.userIds.some(userId => userId.equals(userId));
+       if (isNewuserInList ) {
+        throw new Error('You already add this user to this Task');
+      }
+
+
+       const result = await db.collection('TaskLists').updateOne(
+        {_id: new ObjectId(String(taskListId))}, {
+          $push : {
+            userIds: new ObjectId(String(userId))
+          }
+        }
+      )
+
+      if (result.matchedCount === 0) {
+        throw new Error('Task list not found or not updated');
+      }
+    
+      // Fetch the updated document
+      return await db.collection('TaskLists').findOne({ _id: new ObjectId(String(taskListId)) });
+
     }
+
+    
   },
   User: {
     id: ({_id, id}) => _id || id 
