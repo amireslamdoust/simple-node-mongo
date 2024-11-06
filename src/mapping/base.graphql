@@ -1,0 +1,96 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  myTaskLists: [TaskList!]!
+  getTaskList(id: ID!): TaskList!
+  getToDo(id: ID!): ToDo!
+}
+
+type Mutation {
+  singUp(input: SignUpInput): AuthUser!
+  signIn(input: SingInInput): AuthUser!
+
+  createTaskList(input: CreateTaskListInput): TaskList!
+  updateTaskList(input: UpdateTaskListInput): TaskList!
+  deleteTaskList(id: ID!): DeleteMessagesStatus
+  addUserToTaskList(input: AddUserToTaskList): TaskList!
+
+  createToDo(input: CreateToDoInput): ToDo!
+  updateToDo(input: UpdateToDoInput): ToDo!
+  deleteToDo(id: ID!): DeleteMessagesStatus
+}
+
+type DeleteMessagesStatus {
+  message: String!
+}
+
+input CreateToDoInput {
+  content: String!
+  taskListId: ID!
+}
+
+input AddUserToTaskList {
+  taskListId: ID!
+  userId: ID!
+}
+
+input SignUpInput {
+  email: String!
+  password: String!
+  name: String!
+  avatar: String
+}
+
+input SingInInput {
+  email: String!
+  password: String!
+}
+
+input CreateTaskListInput {
+  title: String!
+}
+
+input UpdateToDoInput {
+  id: ID!
+  content: String
+  isCompleted: Boolean
+}
+
+input UpdateTaskListInput {
+  id: ID!
+  title: String!
+  progress: Float
+}
+
+type AuthUser {
+  user: User!
+  token: String!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  avatar: String
+}
+
+type TaskList {
+  id: ID!
+  createdAt: String!
+  title: String!
+  progress: Float!
+
+  users: [User!]!
+  todos: [ToDo!]!
+}
+
+type ToDo {
+  id: ID!
+  content: String!
+  isCompleted: Boolean!
+
+  taskList: TaskList!
+}

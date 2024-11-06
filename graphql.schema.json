@@ -1,0 +1,165 @@
+export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+};
+
+export type AddUserToTaskList = {
+  taskListId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
+};
+
+export type AuthUser = {
+  __typename?: 'AuthUser';
+  token: Scalars['String']['output'];
+  user: User;
+};
+
+export type CreateTaskListInput = {
+  title: Scalars['String']['input'];
+};
+
+export type CreateToDoInput = {
+  content: Scalars['String']['input'];
+  taskListId: Scalars['ID']['input'];
+};
+
+export type DeleteMessagesStatus = {
+  __typename?: 'DeleteMessagesStatus';
+  message: Scalars['String']['output'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  addUserToTaskList: TaskList;
+  createTaskList: TaskList;
+  createToDo: ToDo;
+  deleteTaskList?: Maybe<DeleteMessagesStatus>;
+  deleteToDo?: Maybe<DeleteMessagesStatus>;
+  signIn: AuthUser;
+  singUp: AuthUser;
+  updateTaskList: TaskList;
+  updateToDo: ToDo;
+};
+
+
+export type MutationAddUserToTaskListArgs = {
+  input?: InputMaybe<AddUserToTaskList>;
+};
+
+
+export type MutationCreateTaskListArgs = {
+  input?: InputMaybe<CreateTaskListInput>;
+};
+
+
+export type MutationCreateToDoArgs = {
+  input?: InputMaybe<CreateToDoInput>;
+};
+
+
+export type MutationDeleteTaskListArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteToDoArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationSignInArgs = {
+  input?: InputMaybe<SingInInput>;
+};
+
+
+export type MutationSingUpArgs = {
+  input?: InputMaybe<SignUpInput>;
+};
+
+
+export type MutationUpdateTaskListArgs = {
+  input?: InputMaybe<UpdateTaskListInput>;
+};
+
+
+export type MutationUpdateToDoArgs = {
+  input?: InputMaybe<UpdateToDoInput>;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  getTaskList: TaskList;
+  getToDo: ToDo;
+  myTaskLists: Array<TaskList>;
+};
+
+
+export type QueryGetTaskListArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryGetToDoArgs = {
+  id: Scalars['ID']['input'];
+};
+
+export type SignUpInput = {
+  avatar?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type SingInInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type TaskList = {
+  __typename?: 'TaskList';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  progress: Scalars['Float']['output'];
+  title: Scalars['String']['output'];
+  todos: Array<ToDo>;
+  users: Array<User>;
+};
+
+export type ToDo = {
+  __typename?: 'ToDo';
+  content: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  isCompleted: Scalars['Boolean']['output'];
+  taskList: TaskList;
+};
+
+export type UpdateTaskListInput = {
+  id: Scalars['ID']['input'];
+  progress?: InputMaybe<Scalars['Float']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type UpdateToDoInput = {
+  content?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  isCompleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type User = {
+  __typename?: 'User';
+  avatar?: Maybe<Scalars['String']['output']>;
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+};
