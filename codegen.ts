@@ -2,21 +2,18 @@ import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: "src/mapping/**/*.graphql",
+  schema: "src/mapping/**/*.graphql", // Your GraphQL schema file
   generates: {
-    "src/generated/graphql.ts": {
+    "src/lib/types.generated.ts": {
       plugins: [
-        "typescript",
-        "typescript-resolvers",
-        // "typescript-mongodb",
-        // "typescript-document-nodes",
+        "typescript", // Generates TypeScript types
+        "typescript-resolvers", // Generates resolver skeletons
+        "typescript-mongodb", // For MongoDB types (if you're using MongoDB)
+        "typescript-document-nodes", // For operations and document nodes
       ],
     },
     "./graphql.schema.json": {
-      plugins: [
-        // "introspection",
-        "typescript",
-      ],
+      plugins: ["introspection"],
     },
   },
 };

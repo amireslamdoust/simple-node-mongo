@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
+import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -166,6 +167,11 @@ export type User = {
   name: Scalars['String']['output'];
 };
 
+export type AdditionalEntityFields = {
+  path?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -238,46 +244,95 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   AddUserToTaskList: AddUserToTaskList;
+  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   AuthUser: ResolverTypeWrapper<AuthUser>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  String: ResolverTypeWrapper<Scalars['String']['output']>;
   CreateTaskListInput: CreateTaskListInput;
   CreateToDoInput: CreateToDoInput;
   DeleteMessagesStatus: ResolverTypeWrapper<DeleteMessagesStatus>;
-  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
-  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
   SingInInput: SingInInput;
-  String: ResolverTypeWrapper<Scalars['String']['output']>;
   TaskList: ResolverTypeWrapper<TaskList>;
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   ToDo: ResolverTypeWrapper<ToDo>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   UpdateTaskListInput: UpdateTaskListInput;
   UpdateToDoInput: UpdateToDoInput;
   User: ResolverTypeWrapper<User>;
+  AdditionalEntityFields: AdditionalEntityFields;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   AddUserToTaskList: AddUserToTaskList;
+  ID: Scalars['ID']['output'];
   AuthUser: AuthUser;
-  Boolean: Scalars['Boolean']['output'];
+  String: Scalars['String']['output'];
   CreateTaskListInput: CreateTaskListInput;
   CreateToDoInput: CreateToDoInput;
   DeleteMessagesStatus: DeleteMessagesStatus;
-  Float: Scalars['Float']['output'];
-  ID: Scalars['ID']['output'];
   Mutation: {};
   Query: {};
   SignUpInput: SignUpInput;
   SingInInput: SingInInput;
-  String: Scalars['String']['output'];
   TaskList: TaskList;
+  Float: Scalars['Float']['output'];
   ToDo: ToDo;
+  Boolean: Scalars['Boolean']['output'];
   UpdateTaskListInput: UpdateTaskListInput;
   UpdateToDoInput: UpdateToDoInput;
   User: User;
+  AdditionalEntityFields: AdditionalEntityFields;
 };
+
+export type UnionDirectiveArgs = {
+  discriminatorField?: Maybe<Scalars['String']['input']>;
+  additionalFields?: Maybe<Array<Maybe<AdditionalEntityFields>>>;
+};
+
+export type UnionDirectiveResolver<Result, Parent, ContextType = any, Args = UnionDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type AbstractEntityDirectiveArgs = {
+  discriminatorField: Scalars['String']['input'];
+  additionalFields?: Maybe<Array<Maybe<AdditionalEntityFields>>>;
+};
+
+export type AbstractEntityDirectiveResolver<Result, Parent, ContextType = any, Args = AbstractEntityDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type EntityDirectiveArgs = {
+  embedded?: Maybe<Scalars['Boolean']['input']>;
+  additionalFields?: Maybe<Array<Maybe<AdditionalEntityFields>>>;
+};
+
+export type EntityDirectiveResolver<Result, Parent, ContextType = any, Args = EntityDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type ColumnDirectiveArgs = {
+  overrideType?: Maybe<Scalars['String']['input']>;
+};
+
+export type ColumnDirectiveResolver<Result, Parent, ContextType = any, Args = ColumnDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type IdDirectiveArgs = { };
+
+export type IdDirectiveResolver<Result, Parent, ContextType = any, Args = IdDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type LinkDirectiveArgs = {
+  overrideType?: Maybe<Scalars['String']['input']>;
+};
+
+export type LinkDirectiveResolver<Result, Parent, ContextType = any, Args = LinkDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type EmbeddedDirectiveArgs = { };
+
+export type EmbeddedDirectiveResolver<Result, Parent, ContextType = any, Args = EmbeddedDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type MapDirectiveArgs = {
+  path: Scalars['String']['input'];
+};
+
+export type MapDirectiveResolver<Result, Parent, ContextType = any, Args = MapDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type AuthUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthUser'] = ResolversParentTypes['AuthUser']> = {
   token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -344,3 +399,15 @@ export type Resolvers<ContextType = any> = {
   User?: UserResolvers<ContextType>;
 };
 
+export type DirectiveResolvers<ContextType = any> = {
+  union?: UnionDirectiveResolver<any, any, ContextType>;
+  abstractEntity?: AbstractEntityDirectiveResolver<any, any, ContextType>;
+  entity?: EntityDirectiveResolver<any, any, ContextType>;
+  column?: ColumnDirectiveResolver<any, any, ContextType>;
+  id?: IdDirectiveResolver<any, any, ContextType>;
+  link?: LinkDirectiveResolver<any, any, ContextType>;
+  embedded?: EmbeddedDirectiveResolver<any, any, ContextType>;
+  map?: MapDirectiveResolver<any, any, ContextType>;
+};
+
+import { ObjectId } from 'mongodb';
